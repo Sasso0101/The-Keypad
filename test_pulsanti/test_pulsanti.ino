@@ -1,6 +1,10 @@
+#include <WebUSB.h>
+#include <Keyboard.h>
 #include <Keypad.h>
 #include "Tlc5940.h"
 
+WebUSB WebUSBSerial(1 /* https:// */, "webusb.github.io/arduino/demos/console");
+#define Serial WebUSBSerial
 
 const byte ROWS = 2; //four rows
 const byte COLS = 5; //three columns
@@ -16,6 +20,9 @@ int pins[10] = {7, 6, 5, 9, 8, 2, 1, 0, 15, 14};
 Keypad kpd = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
 void setup() {
+    while (!Serial) {
+      ;
+    }
     Serial.begin(9600);
     kpd.setHoldTime(500);
     
@@ -27,10 +34,8 @@ void setup() {
 void loop() {
     if (Serial.available() > 0) {
       String input = Serial.readString();
-      if (input == "UQzbRPHMVr7JYw") {
-        Serial.write("qrJjhbWQxm5Pbi");
-      }
-      
+      Serial.write("ok");
+      Serial.flush();
     }
     
     // Fills kpd.key[ ] array with up-to 10 active keys.
@@ -43,8 +48,9 @@ void loop() {
             {
                 switch (kpd.key[i].kstate) {  // Report active key state : IDLE, PRESSED, HOLD, or RELEASED
                     case PRESSED:
-                    Serial.print(kpd.key[i].kchar);
-                    Serial.print(" ");
+                    Keyboard.write(kpd.key[i].kchar);
+                    /*Serial.print(kpd.key[i].kchar);
+                    Serial.print(" ");*/
                     Tlc.set(pins[kpd.key[i].kchar - '0'], 4095);
                     Tlc.update();
                  break;

@@ -1,0 +1,34 @@
+################################################################################
+################################## The Keypad ##################################
+################################################################################
+thekeypad.name=The Keypad
+
+thekeypad.upload.tool=avrdude
+thekeypad.upload.protocol=avr109
+thekeypad.upload.maximum_size=28672
+thekeypad.upload.maximum_data_size=2560
+thekeypad.upload.speed=57600
+thekeypad.upload.disable_flushing=true
+thekeypad.upload.use_1200bps_touch=true
+thekeypad.upload.wait_for_upload_port=true
+
+thekeypad.bootloader.tool=avrdude
+thekeypad.bootloader.unlock_bits=0x3F
+thekeypad.bootloader.lock_bits=0x2F
+thekeypad.bootloader.low_fuses=0xFF
+thekeypad.bootloader.high_fuses=0xD8
+thekeypad.bootloader.extended_fuses=0xCB
+thekeypad.bootloader.file=caterina/Caterina-promicro16.hex
+
+thekeypad.build.board=AVR_PROMICRO
+thekeypad.build.core=arduino:arduino
+thekeypad.build.variant=promicro
+thekeypad.build.mcu=atmega32u4
+thekeypad.build.usb_product="The Keypad"
+thekeypad.build.usb_manufacturer="Sasso's electronics"
+thekeypad.build.extra_flags={build.usb_flags}
+thekeypad.build.vid=0x3031
+thekeypad.build.pid.0=0x3030
+thekeypad.build.pid.1=0x3031
+thekeypad.build.pid=0x3031
+thekeypad.build.f_cpu=16000000L
