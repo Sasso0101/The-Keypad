@@ -20,10 +20,6 @@ int pins[10] = {7, 6, 5, 9, 8, 2, 1, 0, 15, 14};
 Keypad kpd = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
 void setup() {
-    while (!Serial) {
-      ;
-    }
-    Serial.begin(9600);
     kpd.setHoldTime(500);
     
     Tlc.init();
@@ -32,10 +28,15 @@ void setup() {
 }
 
 void loop() {
-    if (Serial.available() > 0) {
-      String input = Serial.readString();
-      Serial.write("ok");
-      Serial.flush();
+    if (Serial) {
+      if (Serial.available() > 0) {
+        String input = Serial.readString();
+        Serial.write("ok");
+        Serial.flush();
+      }
+      else {
+        Serial.begin(9600);
+      }
     }
     
     // Fills kpd.key[ ] array with up-to 10 active keys.
