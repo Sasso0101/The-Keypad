@@ -3,6 +3,18 @@
 
   var port;
   let textEncoder = new TextEncoder();
+  let keys = {
+    233: "Volume +",
+    234: "Volume -",
+    182: "Precedente",
+    205: "Play/pausa",
+    181: "Successivo",
+    226: "Muto",
+    104: "F13",
+    105: "F14",
+    106: "F15",
+    107: "F16"
+  };
 
   /*t.onTerminalReady = () => {
     console.log('Terminal ready.');
@@ -39,12 +51,13 @@
         port.onReceive = data => {
           let textDecoder = new TextDecoder();
           let str = textDecoder.decode(data);
-          str = str.split(" ");
+          str = str.trim().split(" ");
           if (str[0] == "init") {
             console.log("init received correctly");
             for (var i = 1; i < str.length; i++) {
               let div = document.createElement('div');
-              div.innerHTML = str[i];
+              div.id = str[i];
+              div.innerHTML = keys[str[i]];
               keypad.appendChild(div);
             }
           }

@@ -53,6 +53,10 @@ void setup() {
   Tlc.update();
 
   Consumer.begin();
+
+  /*int vol = 0xE9;
+  ConsumerKeycode volume = vol;
+  keys[1].value = volume;*/
 }
 
 void loop() {
@@ -61,11 +65,9 @@ void loop() {
     serialInit = true;
     // Tells the PC the key configuration
     Serial.write("init ");
-    for (int row = 0; row < ROWS; row++) {
-      for (int column = 0; column < COLS; column++) {
-        Serial.write(keysID[row][column]);
-        Serial.write(" ");
-      }
+    for (int i = 0; i < 10; i++) {
+      Serial.print(keys[i].value);
+      Serial.write(" ");
     }
     Serial.flush();
   } else if (!Serial && serialInit) {
