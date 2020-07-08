@@ -1,65 +1,81 @@
+#include <HID-Project.h>
+#include <HID-Settings.h>
 #include <WebUSB.h>
-#include <Keyboard.h>
 #include <Keypad.h>
-#include "Tlc5940.h"
+#include <Tlc5940.h>
 
-WebUSB WebUSBSerial(1 /* https:// */, "webusb.github.io/arduino/demos/console");
+// Initialize webUSB
+WebUSB WebUSBSerial(0, "localhost/");
 #define Serial WebUSBSerial
 
-const byte ROWS = 2; //four rows
-const byte COLS = 5; //three columns
+const byte ROWS = 2;
+const byte COLS = 5;
 char keys[ROWS][COLS] = {
-  {'0','1','2','3','4'},
-  {'5','6','7','8','9'}
+  {'0', '1', '2', '3', '4'},
+  {'5', '6', '7', '8', '9'}
 };
-byte rowPins[ROWS] = {2, 3}; //connect to the row pinouts of the keypad
-byte colPins[COLS] = {A0, 8, 7, 6, 4}; //connect to the column pinouts of the keypad
+//Row pinouts of the keypad
+byte rowPins[ROWS] = {2, 3};
+//Column pinouts of the keypad
+byte colPins[COLS] = {A0, 8, 7, 6, 4};
 
-int pins[10] = {7, 6, 5, 9, 8, 2, 1, 0, 15, 14};
+// Array which points to which pin i button is connected to TLC5940
+int ledPin[10] = {7, 6, 5, 9, 8, 2, 1, 0, 15, 14};
+bool serialInit = false;
 
 Keypad kpd = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
 void setup() {
-    kpd.setHoldTime(500);
-    
-    Tlc.init();
-    Tlc.clear();
-    Tlc.update();
+  kpd.setHoldTime(500);
+
+  Tlc.init();
+  Tlc.clear();
+  Tlc.update();
+
+  Consumer.begin();
 }
 
 void loop() {
-    if (Serial) {
-      if (Serial.available() > 0) {
-        String input = Serial.readString();
-        Serial.write("ok");
-        Serial.flush();
-      }
-      else {
-        Serial.begin(9600);
+  if (Serial && !serialInit) {
+    Serial.begin(9600);
+    serialInit = true;
+    // Tells the PC the key configuration
+    Serial.write("init ");
+    for (int row = 0; row < ROWS; row++) {
+      for (int column = 0; column < COLS; column++) {
+        Serial.write(keys[row][column]);
+        Serial.write(" ");
       }
     }
-    
-    // Fills kpd.key[ ] array with up-to 10 active keys.
-    // Returns true if there are ANY active keys.
-    if (kpd.getKeys())
+    Serial.flush();
+  } else if (!Serial && serialInit) {
+    serialInit = false;
+  }
+
+  // Fills kpd.key[ ] array with up-to 10 active keys.
+  // Returns true if there are ANY active keys.
+  if (kpd.getKeys())
+  {
+    for (int i = 0; i < LIST_MAX; i++) // Scan the whole key list.
     {
-        for (int i=0; i<LIST_MAX; i++)   // Scan the whole key list.
-        {
-            if ( kpd.key[i].stateChanged )   // Only find keys that have changed state.
-            {
-                switch (kpd.key[i].kstate) {  // Report active key state : IDLE, PRESSED, HOLD, or RELEASED
-                    case PRESSED:
-                    Keyboard.write(kpd.key[i].kchar);
-                    /*Serial.print(kpd.key[i].kchar);
-                    Serial.print(" ");*/
-                    Tlc.set(pins[kpd.key[i].kchar - '0'], 4095);
-                    Tlc.update();
-                 break;
-                  case RELEASED:
-                    Tlc.set(pins[kpd.key[i].kchar - '0'], 0);
-                    Tlc.update();
-                }
+      if ( kpd.key[i].stateChanged )   // Only find keys that have changed state.
+      {
+        switch (kpd.key[i].kstate) {  // Report active key state : IDLE, PRESSED, HOLD, or RELEASED
+          case PRESSED:
+            Keyboard.write(kpd.key[i].kchar);
+            if (Serial) {
+              Serial.write(kpd.key[i].kchar);
+              Serial.write(" ");
+              Serial.flush();
             }
+            Tlc.set(ledPin[kpd.key[i].kchar - '0'], 4095);
+            Tlc.update();
+            break;
+          case RELEASED:
+            Tlc.set(ledPin[kpd.key[i].kchar - '0'], 0);
+            Tlc.update();
         }
+      }
     }
+  }
 }  // End loop
