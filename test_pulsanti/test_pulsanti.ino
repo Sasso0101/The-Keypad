@@ -10,10 +10,30 @@ WebUSB WebUSBSerial(0, "localhost/");
 
 const byte ROWS = 2;
 const byte COLS = 5;
-char keys[ROWS][COLS] = {
+char keysID[ROWS][COLS] = {
   {'0', '1', '2', '3', '4'},
   {'5', '6', '7', '8', '9'}
 };
+
+typedef enum {HOTKEY, MEDIA} keyType;
+typedef struct {
+  keyType type;
+  int value;
+} key;
+
+key keys[10] = {
+  {MEDIA, MEDIA_VOLUME_UP},
+  {MEDIA, MEDIA_VOLUME_DOWN},
+  {MEDIA, MEDIA_PREVIOUS},
+  {MEDIA, MEDIA_PLAY_PAUSE},
+  {MEDIA, MEDIA_NEXT},
+  {MEDIA, MEDIA_VOLUME_MUTE},
+  {HOTKEY, KEY_F13},
+  {HOTKEY, KEY_F14},
+  {HOTKEY, KEY_F15},
+  {HOTKEY, KEY_F16}
+};
+
 //Row pinouts of the keypad
 byte rowPins[ROWS] = {2, 3};
 //Column pinouts of the keypad
@@ -23,7 +43,7 @@ byte colPins[COLS] = {A0, 8, 7, 6, 4};
 int ledPin[10] = {7, 6, 5, 9, 8, 2, 1, 0, 15, 14};
 bool serialInit = false;
 
-Keypad kpd = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
+Keypad kpd = Keypad( makeKeymap(keysID), rowPins, colPins, ROWS, COLS );
 
 void setup() {
   kpd.setHoldTime(500);
@@ -43,7 +63,7 @@ void loop() {
     Serial.write("init ");
     for (int row = 0; row < ROWS; row++) {
       for (int column = 0; column < COLS; column++) {
-        Serial.write(keys[row][column]);
+        Serial.write(keysID[row][column]);
         Serial.write(" ");
       }
     }
@@ -62,7 +82,8 @@ void loop() {
       {
         switch (kpd.key[i].kstate) {  // Report active key state : IDLE, PRESSED, HOLD, or RELEASED
           case PRESSED:
-            Keyboard.write(kpd.key[i].kchar);
+            sendKey(kpd.key[i].kchar - '0');
+            
             if (Serial) {
               Serial.write(kpd.key[i].kchar);
               Serial.write(" ");
@@ -79,3 +100,12 @@ void loop() {
     }
   }
 }  // End loop
+
+void sendKey(int i) {
+  if (keys[i].type == MEDIA) {
+    Consumer.write(keys[i].value);
+  }
+  else if (keys[i].type == HOTKEY) {
+    Keyboard.write(keys[i].value);
+  }
+}
