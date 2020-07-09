@@ -3,19 +3,49 @@
   <head>
     <!-- Origin Trial Token, feature = WebUSB (For Chrome M57+), origin = https://webusb.github.io, expires = 2017-06-19 -->
     <meta http-equiv="origin-trial" data-feature="WebUSB (For Chrome M57+)" data-expires="2017-06-19" content="Ag83MurQOa5N4SKRCqqtSlbycfe08s5LgUiqEI7J3jTk2NEIpRp7SLPz2i+EBDuXyf+AeRMdD6BI++kTSJmGzQEAAABReyJvcmlnaW4iOiJodHRwczovL3dlYnVzYi5naXRodWIuaW86NDQzIiwiZmVhdHVyZSI6IldlYlVTQjIiLCJleHBpcnkiOjE0OTc4OTM2OTV9">
-    <title>Console</title>
-    <script src="serial.js"></script>
-    <script src="script.js"></script>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>The Keypad</title>
+    <link rel="stylesheet" href="style.css">
+    
   </head>
   <body>
-    <p>
-      <button id="connect">Connect</button>
-    </p>
-    <div id="keypad">
-
+    <div id="interface">
+      <div id="keypadContainer">
+        <div id="keypad"></div>
+      </div>
+      <aside>
+        <div class="configuration">
+          <div class="tabs">
+            <div>Actions</div>
+            <div>LEDs</div>
+          </div>
+          <div id="actions">
+            <div id="hotkey" draggable="true" ondragstart="drag(event)">Hotkey</div>
+            <div id="media" draggable="true" ondragstart="drag(event)">Multimedia</div>
+          </div>
+        </div>
+        <div class="status">
+          <p id="connectionStatus"></p>
+          <button id="connect">Connect</button>
+        </div>
+      </aside>
+      <div class="settings">
+        <p id="noSelect" style="display:none;">Select a key to configure its action.</p>
+        <div id="settingsContainer">
+          <p>Button 1</p>
+          <p>Action: media</p>
+          <select name="options" id="options">
+            <option value="233">V+</option>
+            <option value="234">V-</option>
+            <option value="182">&lt;&lt;</option>
+            <option value="205">play pausa</option>
+            <option value="181">&gt;&gt;</option>
+          </select>
+        </div>
+      </div>
     </div>
-    <div class="status">
-        <p id="connectionStatus"></p>
-    </div>
+    <script src="js/serial.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/script.js"></script>
   </body>
 </html>

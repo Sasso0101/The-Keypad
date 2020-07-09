@@ -60,17 +60,24 @@ void setup() {
 }
 
 void loop() {
-  if (Serial && !serialInit) {
-    Serial.begin(9600);
-    serialInit = true;
-    // Tells the PC the key configuration
-    Serial.write("init ");
-    for (int i = 0; i < 10; i++) {
-      Serial.print(keys[i].value);
-      Serial.write(" ");
+  if (Serial) {
+    if (serialInit == false) {
+      Serial.begin(9600);
+      serialInit = true;
     }
-    Serial.flush();
-  } else if (!Serial && serialInit) {
+    else if(Serial.available()) {
+      String incomingMessage = Serial.readString();
+      if (incomingMessage == "sendInit") {
+        // Tells the PC the key configuration
+        Serial.write("init ");
+        for (int i = 0; i < 10; i++) {
+          Serial.print(keys[i].value);
+          Serial.write(" ");
+        }
+        Serial.flush();
+      }
+    }
+  } else if (!Serial) {
     serialInit = false;
   }
 
@@ -103,6 +110,7 @@ void loop() {
   }
 }  // End loop
 
+// Send a keystroke
 void sendKey(int i) {
   if (keys[i].type == MEDIA) {
     Consumer.write(keys[i].value);
