@@ -15,10 +15,10 @@ char keysID[ROWS][COLS] = {
   {'5', '6', '7', '8', '9'}
 };
 
-typedef enum {HOTKEY, MEDIA} keyType;
+typedef enum {FN, MEDIA} keyType;
 typedef struct {
   keyType type;
-  int value;
+  uint8_t value;
 } key;
 
 key keys[10] = {
@@ -28,10 +28,10 @@ key keys[10] = {
   {MEDIA, MEDIA_PLAY_PAUSE},
   {MEDIA, MEDIA_NEXT},
   {MEDIA, MEDIA_VOLUME_MUTE},
-  {HOTKEY, KEY_F13},
-  {HOTKEY, KEY_F14},
-  {HOTKEY, KEY_F15},
-  {HOTKEY, KEY_F16}
+  {FN, KEY_F13},
+  {FN, KEY_F14},
+  {FN, KEY_F15},
+  {FN, KEY_F16}
 };
 
 //Row pinouts of the keypad
@@ -53,10 +53,6 @@ void setup() {
   Tlc.update();
 
   Consumer.begin();
-
-  /*int vol = 0xE9;
-  ConsumerKeycode volume = vol;
-  keys[1].value = volume;*/
 }
 
 void loop() {
@@ -72,6 +68,8 @@ void loop() {
         Serial.write("init ");
         for (int i = 0; i < 10; i++) {
           Serial.print(keys[i].value);
+          Serial.write(",");
+          Serial.print(keys[i].type);
           Serial.write(" ");
         }
         Serial.flush();
@@ -115,7 +113,7 @@ void sendKey(int i) {
   if (keys[i].type == MEDIA) {
     Consumer.write(keys[i].value);
   }
-  else if (keys[i].type == HOTKEY) {
-    Keyboard.write(keys[i].value);
+  else if (keys[i].type == FN) {
+    Keyboard.write(KeyboardKeycode(keys[i].value));
   }
 }
