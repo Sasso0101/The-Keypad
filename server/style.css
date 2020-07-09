@@ -98,18 +98,53 @@ aside {
     height: 50px;
     border-radius: 20px;
     cursor: pointer;
-    font-family: cascadia;
+    font-family: inherit;
     font-size: 18px;
 }
 
 /* SETTINGS */
-.settings {
-    border-top: 2px solid #252525;
+#noSelect {
     display: flex;
     justify-content: center;
     align-items: center;
+    border-top: 2px solid #252525;
+    font-size: 20px;
     color: #afaeae;
 }
-#noSelect {
+#settings {
+    display: flex;
+    justify-content: center;
+    border-top: 2px solid #252525;
+    color: white;
+    padding: 30px;
+}
+#keyPreview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border: 4px solid white;
+    color: white;
+    border-radius: 20px;
+    padding: 5px;
+    font-size: 30px;
+    width: var(--buttonSize);
+    height: var(--buttonSize);
+}
+.settingsControls {
+    padding-left: 30px;
+}
+.settingsControls h2 {
+    margin: 0;
+}
+.settingsControls p {
+    margin: 3px 0 15px 0;
+}
+.settingsControls select {
+    background-color: white;
+    font-family: inherit;
     font-size: 20px;
+    height: 48px;
+    width: 200px;
+    text-align: center;
 }

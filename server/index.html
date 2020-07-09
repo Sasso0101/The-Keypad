@@ -19,33 +19,26 @@
             <div>Actions</div>
             <div>LEDs</div>
           </div>
-          <div id="actions">
-            <div id="hotkey" draggable="true" ondragstart="drag(event)">Hotkey</div>
-            <div id="media" draggable="true" ondragstart="drag(event)">Multimedia</div>
-          </div>
+          <div id="actions"></div>
         </div>
         <div class="status">
           <p id="connectionStatus"></p>
           <button id="connect">Connect</button>
         </div>
       </aside>
-      <div class="settings">
-        <p id="noSelect" style="display:none;">Select a key to configure its action.</p>
-        <div id="settingsContainer">
-          <p>Button 1</p>
-          <p>Action: media</p>
+      <p id="noSelect">Select a key to configure its action.</p>
+      <div id="settings" style="display:none;">
+        <div id="keyPreview">V+</div>
+        <div class="settingsControls">
+          <h2>Button <span id="buttonNumber"></span></h2>
+          <p>Action: <span id="action"></span></p>
           <select name="options" id="options">
-            <option value="233">V+</option>
-            <option value="234">V-</option>
-            <option value="182">&lt;&lt;</option>
-            <option value="205">play pausa</option>
-            <option value="181">&gt;&gt;</option>
           </select>
         </div>
       </div>
     </div>
     <script src="js/serial.js"></script>
     <script src="js/events.js"></script>
-    <script src="js/script.js"></script>
+    <script src="js/webUSB.js"></script>
   </body>
 </html>
