@@ -1,3 +1,22 @@
+function removeKeys() {
+  keypad.innerHTML = '';
+}
+function removeSettings() {
+  document.querySelector('#noConnect').style.display = '';
+  document.querySelector('#noSelect').style.display = 'none';
+  document.querySelector('#settings').style.display = 'none';
+}
+function disconnect() {
+  port.disconnect();
+  connectButton.textContent = 'Connect';
+  connectionStatus.style.display = 'none';
+  removeKeys();
+  removeSettings();
+  document.querySelector('#guide').style.display = '';
+  document.querySelector('#keypad').style.display = 'none';
+  port = null;
+}
+
 function allowDrop(ev) {
   ev.preventDefault();
 }
@@ -13,6 +32,7 @@ function drop(ev) {
   ev.target.innerHTML = keys[data].label;
   ev.target.setAttribute('data-value', '');
   removeColor(ev);
+  ev.target.click();
 }
 
 function setColor(ev) {
@@ -25,7 +45,7 @@ function removeColor(ev) {
 
 function keyClick(ev) {
   document.querySelector('#noSelect').style.display = 'none';
-  document.querySelector('#settings').style.display = 'flex';
+  document.querySelector('#settings').style.display = '';
   document.querySelector('#buttonNumber').innerHTML = parseInt(ev.target.id) + 1;
   document.querySelector('#keyPreview').innerHTML = ev.target.innerHTML;
 
@@ -63,6 +83,7 @@ function selectChange(ev) {
   let keyType = document.querySelector('#action').getAttribute('data-keyType');
   keyPreview.innerHTML = selectedLabel;
   key.innerHTML = selectedLabel;
+  key.setAttribute('data-value', selectedValue);
 
 
   let message = 'changeKey ' + keyID + ' ' + keyType + ' ' + selectedValue;

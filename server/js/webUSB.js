@@ -32,7 +32,7 @@ var keys = {
       label: "<<"
     },
     205: {
-      label: "play pausa"
+      label: "play pause"
     },
     181: {
       label: ">>"
@@ -42,23 +42,23 @@ var keys = {
     }
   },
 };
-var port;
-var textEncoder = new TextEncoder();
+let port;
+let textEncoder = new TextEncoder();
+let connectButton = document.querySelector('#connect');
+let connecting = false;
 
 (function() {
   'use strict';
 
   document.addEventListener('DOMContentLoaded', event => {
-    let connectButton = document.querySelector('#connect');
     let connectionStatus = document.querySelector('#connectionStatus');
 
     function connect() {
-      connectionStatus.style.display = 'block';
-      connectionStatus.innerHTML = 'Connecting to ' + port.device_.productName + '...';
+      connecting = true;
       port.connect().then(() => {
         console.log(port);
-        connectionStatus.innerHTML = 'Connected.';
-        connectButton.textContent = 'Disconnect';
+        connectionStatus.style.display = 'block';
+        connectionStatus.innerHTML = 'Connecting to ' + port.device_.productName + '...';
         
         port.send(textEncoder.encode("sendInit")).catch(error => {
           connectionStatus.innerHTML = 'Send error: ' + error;
@@ -69,35 +69,47 @@ var textEncoder = new TextEncoder();
           receivedKeys = receivedKeys.trim().split(" ");
           if (receivedKeys[0] == "init") {
             console.log("init received correctly");
-            getKeys(receivedKeys);
-            getActions();
             document.querySelector('#noConnect').style.display = 'none';
-            document.querySelector('#noSelect').style.display = 'flex';
+            document.querySelector('#noSelect').style.display = '';
+            document.querySelector('#guide').style.display = 'none';
+            document.querySelector('#keypad').style.display = '';
+            connectionStatus.innerHTML = 'Connected.';
+            connectButton.textContent = 'Disconnect';
+            getActions();
+            getKeys(receivedKeys);
+            connecting = false;
+          }
+          else if (receivedKeys[0] == "keyPressed") {
+            document.getElementById(receivedKeys[1]).style.borderColor = 'blue';
+            setTimeout(function() {
+              document.getElementById(receivedKeys[1]).style.borderColor = 'white';
+            }, 300);
           }
         }
         port.onReceiveError = error => {
-          connectionStatus.innerHTML = 'Receive error: ' + error;
+          if (port) {
+            disconnect();
+          }
+          // connectionStatus.innerHTML = 'Receive error: ' + error;
         };
       }, error => {
+        connectStatus = false;
         connectionStatus.innerHTML = 'Connection error: ' + error;
       });
     };
 
     connectButton.addEventListener('click', function() {
-      if (port) {
-        port.disconnect();
-        connectButton.textContent = 'Connect';
-        connectionStatus.style.display = 'none';
-        removeKeys();
-        removeSettings();
-        port = null;
-      } else {
-        serial.requestPort().then(selectedPort => {
-          port = selectedPort;
-          connect();
-        }).catch(error => {
-          connectionStatus.innerHTML = 'Connection error: ' + error;
-        });
+      if (!connecting) {
+        if (port) {
+          disconnect();
+        } else {
+          serial.requestPort().then(selectedPort => {
+            port = selectedPort;
+            connect();
+          }).catch(error => {
+            connectionStatus.innerHTML = 'Connection error: ' + error;
+          });
+        }
       }
     });
 
@@ -154,13 +166,5 @@ var textEncoder = new TextEncoder();
       });
       actions.appendChild(div);
     }
-  }
-  function removeKeys() {
-    keypad.innerHTML = '';
-  }
-  function removeSettings() {
-    document.querySelector('#noConnect').style.display = 'flex';
-    document.querySelector('#noSelect').style.display = 'none';
-    document.querySelector('#settings').style.display = 'none';
   }
 })();

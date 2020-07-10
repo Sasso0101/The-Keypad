@@ -1,5 +1,6 @@
 :root {
     --buttonSize: 110px;
+    --disconnectedTextColor: #afaeae;
 }
 
 @font-face {
@@ -11,6 +12,9 @@ body {
     font-family: cascadia;
     margin: 0;
     user-select: none;
+}
+button {
+    outline: none;
 }
 #interface {
     display: grid;
@@ -27,12 +31,30 @@ body {
     justify-content: center;
     align-items: center;
 }
+#guide {
+    color: white;
+    font-size: 25px;
+}
+#guide h2 {
+    font-size: 30px;
+    text-align: center;
+}
+.buttonContainer {
+    margin: 0 auto;
+    text-align: center;
+}
+.buttonContainer button {
+    width: 44%;
+}
 #keypad {
     display: grid;
     grid-template-columns: var(--buttonSize) var(--buttonSize) var(--buttonSize) var(--buttonSize) var(--buttonSize);
     grid-template-rows: var(--buttonSize) var(--buttonSize);
     gap: 20px 20px;
     font-size: 20px;
+    border: 3px solid white;
+    border-radius: 20px;
+    padding: 30px;
 }
 #keypad div {
     display: flex;
@@ -46,7 +68,6 @@ body {
     cursor: pointer;
     transition: border 0.3s ease-out;
 }
-
 /* SIDEBAR */
 aside {
     grid-row: 1/span 2;
@@ -90,16 +111,18 @@ aside {
     right: 0;
     bottom: 20px;
 }
-#connect {
+.connect {
     background-color: white;
     border: 3px solid #252525;
     color: black;
-    width: 80%;
-    height: 50px;
     border-radius: 20px;
     cursor: pointer;
     font-family: inherit;
     font-size: 18px;
+    height: 50px;
+}
+#connect {
+    width: 80%;
 }
 
 /* SETTINGS */
@@ -109,7 +132,7 @@ aside {
     align-items: center;
     border-top: 2px solid #252525;
     font-size: 20px;
-    color: #afaeae;
+    color: var(--disconnectedTextColor);
 }
 #settings {
     display: flex;
@@ -128,17 +151,19 @@ aside {
     border-radius: 20px;
     padding: 5px;
     font-size: 30px;
-    width: var(--buttonSize);
-    height: var(--buttonSize);
+    width: calc(var(--buttonSize)*1.2);
+    height: calc(var(--buttonSize)*1.2);
 }
 .settingsControls {
     padding-left: 30px;
 }
 .settingsControls h2 {
     margin: 0;
+    font-size: 31px;
 }
 .settingsControls p {
     margin: 3px 0 15px 0;
+    font-size: 22px;
 }
 .settingsControls select {
     background-color: white;

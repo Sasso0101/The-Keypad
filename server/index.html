@@ -6,12 +6,19 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <title>The Keypad</title>
     <link rel="stylesheet" href="style.css">
-    
   </head>
   <body>
     <div id="interface">
       <div id="keypadContainer">
-        <div id="keypad"></div>
+        <div id="guide">
+          <h2>"The Keypad" is not connected</h2>
+          <p>1. Connect "The Keypad" to any USB port</p>
+          <p>2. Click connect</p>
+          <div class="buttonContainer">
+            <button class="connect" onclick="document.querySelector('#connect').click();">Connect</button>
+          </div>
+        </div>
+        <div id="keypad" style="display:none;"></div>
       </div>
       <aside>
         <div class="configuration">
@@ -23,7 +30,7 @@
         </div>
         <div class="status">
           <p id="connectionStatus"></p>
-          <button id="connect">Connect</button>
+          <button id="connect" class="connect">Connect</button>
         </div>
       </aside>
       <p id="noConnect" class="error">Connect a device to configure its actions.</p>

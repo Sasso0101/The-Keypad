@@ -103,8 +103,8 @@ void loop() {
             sendKey(kpd.key[i].kchar - '0');
             
             if (Serial) {
-              Serial.print(keys[kpd.key[i].kchar - '0'].value);
-              Serial.write(" ");
+              Serial.print("keyPressed ");
+              Serial.print(kpd.key[i].kchar - '0');
               Serial.flush();
             }
             Tlc.set(ledPin[kpd.key[i].kchar - '0'], 4095);
