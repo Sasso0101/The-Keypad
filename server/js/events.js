@@ -8,7 +8,7 @@ function drag(ev) {
 
 function drop(ev) {
   ev.preventDefault();
-  var data=ev.dataTransfer.getData("text");
+  let data=ev.dataTransfer.getData("text");
   ev.target.setAttribute('data-action', data);
   ev.target.innerHTML = keys[data].label;
   ev.target.setAttribute('data-value', '');
@@ -32,9 +32,13 @@ function keyClick(ev) {
   let action = parseInt(ev.target.getAttribute('data-action'));
   let value = parseInt(ev.target.getAttribute('data-value'));
   document.querySelector('#action').innerHTML = keys[action].label;
+  document.querySelector('#action').setAttribute('data-keyType', action);
 
-  let select = document.querySelector('#options')
+  let select = document.querySelector('#options');
   select.innerHTML = '';
+  select.addEventListener("change", function(event){
+    selectChange(event);
+  });
 
   for (let selectValue in keys[action]) {
     entry = keys[action][parseInt(selectValue)];
@@ -47,5 +51,25 @@ function keyClick(ev) {
       }
       select.appendChild(option);
     }
+  }
+}
+
+function selectChange(ev) {
+  let keyPreview = document.querySelector('#keyPreview');
+  let keyID = parseInt(document.querySelector('#buttonNumber').innerHTML) - 1;
+  let key = document.getElementById(keyID);
+  let selectedLabel = ev.target.options[ev.target.selectedIndex].text;
+  let selectedValue = parseInt(ev.target.value);
+  let keyType = document.querySelector('#action').getAttribute('data-keyType');
+  keyPreview.innerHTML = selectedLabel;
+  key.innerHTML = selectedLabel;
+
+
+  let message = 'changeKey ' + keyID + ' ' + keyType + ' ' + selectedValue;
+  if (port !== undefined) {
+    port.send(textEncoder.encode(message)).catch(error => {
+      let connectionStatus = document.querySelector('#connectionStatus');
+      connectionStatus.innerHTML = 'Send error: ' + error;
+    });
   }
 }

@@ -62,7 +62,7 @@ void loop() {
       serialInit = true;
     }
     else if(Serial.available()) {
-      String incomingMessage = Serial.readString();
+      String incomingMessage = Serial.readStringUntil(' ');
       if (incomingMessage == "sendInit") {
         // Tells the PC the key configuration
         Serial.write("init ");
@@ -73,6 +73,17 @@ void loop() {
           Serial.write(" ");
         }
         Serial.flush();
+      }
+      else {
+        if (incomingMessage == "changeKey") {
+          int keyID = Serial.readStringUntil(' ').toInt();
+          int keyType = Serial.readStringUntil(' ').toInt();
+          int value = Serial.readStringUntil(' ').toInt();
+          
+          keys[keyID].type = keyType;
+          keys[keyID].value = value;
+          //keys[keyID] = (key){keyType, value};
+        }
       }
     }
   } else if (!Serial) {
@@ -92,7 +103,7 @@ void loop() {
             sendKey(kpd.key[i].kchar - '0');
             
             if (Serial) {
-              Serial.write(kpd.key[i].kchar);
+              Serial.print(keys[kpd.key[i].kchar - '0'].value);
               Serial.write(" ");
               Serial.flush();
             }

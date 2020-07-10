@@ -39,36 +39,14 @@ var keys = {
     },
     226: {
       label: "Vx"
-    },
+    }
   },
 };
+var port;
+var textEncoder = new TextEncoder();
 
 (function() {
   'use strict';
-
-  var port;
-  let textEncoder = new TextEncoder();
-
-  /*t.onTerminalReady = () => {
-    console.log('Terminal ready.');
-    let io = t.io.push();
-
-    io.onVTKeystroke = str => {
-      if (port !== undefined) {
-        port.send(textEncoder.encode(str)).catch(error => {
-          connectionStatus.innerHTML = 'Send error: ' + error;
-        });
-      }
-    };
-
-    io.sendString = str => {
-      if (port !== undefined) {
-        port.send(textEncoder.encode(str)).catch(error => {
-          connectionStatus.innerHTML = 'Send error: ' + error;
-        });
-      }
-    };
-  };*/
 
   document.addEventListener('DOMContentLoaded', event => {
     let connectButton = document.querySelector('#connect');
@@ -93,6 +71,8 @@ var keys = {
             console.log("init received correctly");
             getKeys(receivedKeys);
             getActions();
+            document.querySelector('#noConnect').style.display = 'none';
+            document.querySelector('#noSelect').style.display = 'flex';
           }
         }
         port.onReceiveError = error => {
@@ -108,7 +88,8 @@ var keys = {
         port.disconnect();
         connectButton.textContent = 'Connect';
         connectionStatus.style.display = 'none';
-        removeKeys()
+        removeKeys();
+        removeSettings();
         port = null;
       } else {
         serial.requestPort().then(selectedPort => {
@@ -176,5 +157,10 @@ var keys = {
   }
   function removeKeys() {
     keypad.innerHTML = '';
+  }
+  function removeSettings() {
+    document.querySelector('#noConnect').style.display = 'flex';
+    document.querySelector('#noSelect').style.display = 'none';
+    document.querySelector('#settings').style.display = 'none';
   }
 })();
