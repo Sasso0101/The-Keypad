@@ -3,6 +3,7 @@
 #include <WebUSB.h>
 #include <Keypad.h>
 #include <Tlc5940.h>
+#include <EEPROM.h>
 
 // Initialize webUSB
 WebUSB WebUSBSerial(0, "localhost/");
@@ -15,13 +16,13 @@ char keysID[ROWS][COLS] = {
   {'5', '6', '7', '8', '9'}
 };
 
-typedef enum {FN, MEDIA} keyType;
+typedef enum:byte {FN, MEDIA} keyType;
 typedef struct {
   keyType type;
-  uint8_t value;
+  byte value;
 } key;
 
-key keys[10] = {
+/*key keys[10] = {
   {MEDIA, MEDIA_VOLUME_UP},
   {MEDIA, MEDIA_VOLUME_DOWN},
   {MEDIA, MEDIA_PREVIOUS},
@@ -32,7 +33,7 @@ key keys[10] = {
   {FN, KEY_F14},
   {FN, KEY_F15},
   {FN, KEY_F16}
-};
+};*/
 
 //Row pinouts of the keypad
 byte rowPins[ROWS] = {2, 3};
@@ -67,9 +68,9 @@ void loop() {
         // Tells the PC the key configuration
         Serial.write("init ");
         for (int i = 0; i < 10; i++) {
-          Serial.print(keys[i].value);
+          Serial.print(EEPROM.read(i*2+1));
           Serial.write(",");
-          Serial.print(keys[i].type);
+          Serial.print(EEPROM.read(i*2));
           Serial.write(" ");
         }
         Serial.flush();
@@ -79,10 +80,9 @@ void loop() {
           int keyID = Serial.readStringUntil(' ').toInt();
           int keyType = Serial.readStringUntil(' ').toInt();
           int value = Serial.readStringUntil(' ').toInt();
-          
-          keys[keyID].type = keyType;
-          keys[keyID].value = value;
-          //keys[keyID] = (key){keyType, value};
+
+          EEPROM.update(keyID*2, keyType);
+          EEPROM.update(keyID*2+1, value);
         }
       }
     }
@@ -121,10 +121,10 @@ void loop() {
 
 // Send a keystroke
 void sendKey(int i) {
-  if (keys[i].type == MEDIA) {
-    Consumer.write(keys[i].value);
+  if (EEPROM.read(i*2) == MEDIA) {
+    Consumer.write(EEPROM.read(i*2 + 1));
   }
-  else if (keys[i].type == FN) {
-    Keyboard.write(KeyboardKeycode(keys[i].value));
+  else if (EEPROM.read(i*2) == FN) {
+    Keyboard.write(KeyboardKeycode(EEPROM.read(i*2 + 1)));
   }
 }

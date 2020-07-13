@@ -1,0 +1,18 @@
+{
+    "short_name": "The Keypad",
+    "description": "Control your Keypad, now offline!",
+    "icons": [
+      {
+        "src": "/icons/keypad-192x192.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "/icons/keypad-512x512.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ],
+    "start_url": "/",
+    "display": "standalone"
+  }
