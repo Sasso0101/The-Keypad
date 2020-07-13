@@ -8,10 +8,6 @@ if (workbox) {
 }
 
 workbox.routing.registerRoute(
-  ({request}) => request.destination === 'script',
-  new workbox.strategies.NetworkFirst()
-);
-workbox.routing.registerRoute(
-  ({request}) => request.destination === 'style',
-  new workbox.strategies.NetworkFirst()
-);
+    new RegExp('/.*'),
+    new workbox.strategies.NetworkFirst()
+  );

@@ -93,7 +93,7 @@ let connecting = false;
           // connectionStatus.innerHTML = 'Receive error: ' + error;
         };
       }, error => {
-        connectStatus = false;
+        connecting = false;
         connectionStatus.innerHTML = 'Connection error: ' + error;
       });
     };
