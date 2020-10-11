@@ -63,15 +63,6 @@ var keys = {
     },
     3: {
       label: "Pause"
-    },
-    104: {
-      label: "Next segment old"
-    },
-    105: {
-      label: "Reset old"
-    },
-    106: {
-      label: "Pause old"
     }
   }
 };
