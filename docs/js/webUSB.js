@@ -41,6 +41,39 @@ var keys = {
       label: "Vx"
     }
   },
+  2: {
+    label: "Youtube",
+    0: {
+      label: "None"
+    },
+    9: {
+      label: "Full screen"
+    }
+  },
+  3: {
+    label: "ATEM Mini",
+    0: {
+      label: "None"
+    },
+    1: {
+      label: "Next segment"
+    },
+    2: {
+      label: "Reset"
+    },
+    3: {
+      label: "Pause"
+    },
+    104: {
+      label: "Next segment old"
+    },
+    105: {
+      label: "Reset old"
+    },
+    106: {
+      label: "Pause old"
+    }
+  }
 };
 let port;
 let textEncoder = new TextEncoder();

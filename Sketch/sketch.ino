@@ -7,7 +7,7 @@
 
 // Initialize webUSB
 WebUSB WebUSBSerial(0, "localhost/");
-#define Serial WebUSBSerial
+// #define Serial WebUSBSerial
 
 const byte ROWS = 2;
 const byte COLS = 5;
@@ -16,24 +16,7 @@ char keysID[ROWS][COLS] = {
   {'5', '6', '7', '8', '9'}
 };
 
-typedef enum:byte {FN, MEDIA} keyType;
-typedef struct {
-  keyType type;
-  byte value;
-} key;
-
-/*key keys[10] = {
-  {MEDIA, MEDIA_VOLUME_UP},
-  {MEDIA, MEDIA_VOLUME_DOWN},
-  {MEDIA, MEDIA_PREVIOUS},
-  {MEDIA, MEDIA_PLAY_PAUSE},
-  {MEDIA, MEDIA_NEXT},
-  {MEDIA, MEDIA_VOLUME_MUTE},
-  {FN, KEY_F13},
-  {FN, KEY_F14},
-  {FN, KEY_F15},
-  {FN, KEY_F16}
-};*/
+typedef enum : byte {FN, MEDIA, YOUTUBE, ATEM} keyType;
 
 //Row pinouts of the keypad
 byte rowPins[ROWS] = {2, 3};
@@ -57,36 +40,37 @@ void setup() {
 }
 
 void loop() {
-  if (Serial) {
+  if (WebUSBSerial) {
     if (serialInit == false) {
+      WebUSBSerial.begin(9600);
       Serial.begin(9600);
       serialInit = true;
     }
-    else if(Serial.available()) {
-      String incomingMessage = Serial.readStringUntil(' ');
+    else if (WebUSBSerial.available()) {
+      String incomingMessage = WebUSBSerial.readStringUntil(' ');
       if (incomingMessage == "sendInit") {
         // Tells the PC the key configuration
-        Serial.write("init ");
+        WebUSBSerial.write("init ");
         for (int i = 0; i < 10; i++) {
-          Serial.print(EEPROM.read(i*2+1));
-          Serial.write(",");
-          Serial.print(EEPROM.read(i*2));
-          Serial.write(" ");
+          WebUSBSerial.print(EEPROM.read(i * 2 + 1));
+          WebUSBSerial.write(",");
+          WebUSBSerial.print(EEPROM.read(i * 2));
+          WebUSBSerial.write(" ");
         }
-        Serial.flush();
+        WebUSBSerial.flush();
       }
       else {
         if (incomingMessage == "changeKey") {
-          int keyID = Serial.readStringUntil(' ').toInt();
-          int keyType = Serial.readStringUntil(' ').toInt();
-          int value = Serial.readStringUntil(' ').toInt();
+          int keyID = WebUSBSerial.readStringUntil(' ').toInt();
+          int keyType = WebUSBSerial.readStringUntil(' ').toInt();
+          int value = WebUSBSerial.readStringUntil(' ').toInt();
 
-          EEPROM.update(keyID*2, keyType);
-          EEPROM.update(keyID*2+1, value);
+          EEPROM.update(keyID * 2, keyType);
+          EEPROM.update(keyID * 2 + 1, value);
         }
       }
     }
-  } else if (!Serial) {
+  } else if (!WebUSBSerial) {
     serialInit = false;
   }
 
@@ -101,11 +85,11 @@ void loop() {
         switch (kpd.key[i].kstate) {  // Report active key state : IDLE, PRESSED, HOLD, or RELEASED
           case PRESSED:
             sendKey(kpd.key[i].kchar - '0');
-            
-            if (Serial) {
-              Serial.print("keyPressed ");
-              Serial.print(kpd.key[i].kchar - '0');
-              Serial.flush();
+
+            if (WebUSBSerial) {
+              WebUSBSerial.print("keyPressed ");
+              WebUSBSerial.print(kpd.key[i].kchar - '0');
+              WebUSBSerial.flush();
             }
             Tlc.set(ledPin[kpd.key[i].kchar - '0'], 4095);
             Tlc.update();
@@ -121,10 +105,13 @@ void loop() {
 
 // Send a keystroke
 void sendKey(int i) {
-  if (EEPROM.read(i*2) == MEDIA) {
-    Consumer.write(EEPROM.read(i*2 + 1));
+  keyType type = EEPROM.read(i * 2);
+  if (type == MEDIA) {
+    Consumer.write(EEPROM.read(i * 2 + 1));
   }
-  else if (EEPROM.read(i*2) == FN) {
-    Keyboard.write(KeyboardKeycode(EEPROM.read(i*2 + 1)));
+  else if (type == FN || type == YOUTUBE) {
+    Keyboard.write(KeyboardKeycode(EEPROM.read(i * 2 + 1)));
+  } else if (type == ATEM) {
+    Serial.println(EEPROM.read(i * 2 + 1));
   }
 }

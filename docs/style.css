@@ -67,6 +67,7 @@ button {
     padding: 5px;
     cursor: pointer;
     transition: border 0.3s ease-out;
+    word-break: break-word;
 }
 /* SIDEBAR */
 aside {
