@@ -56,14 +56,20 @@ var keys = {
       label: "None"
     },
     1: {
-      label: "Next segment"
+      label: "Start"
     },
     2: {
-      label: "Reset"
+      label: "Prepare next segment"
     },
     3: {
+      label: "Next segment"
+    },
+    4: {
       label: "Pause"
-    }
+    },
+    5: {
+      label: "Reset"
+    },
   }
 };
 let port;
