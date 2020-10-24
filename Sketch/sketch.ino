@@ -30,7 +30,7 @@ bool serialInit = false;
 Keypad kpd = Keypad( makeKeymap(keysID), rowPins, colPins, ROWS, COLS );
 
 void setup() {
-  kpd.setHoldTime(500);
+  kpd.setHoldTime(800);
 
   Tlc.init();
   Tlc.clear();
