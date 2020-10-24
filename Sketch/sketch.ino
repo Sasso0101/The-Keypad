@@ -112,6 +112,6 @@ void sendKey(int i) {
   else if (type == FN || type == YOUTUBE) {
     Keyboard.write(KeyboardKeycode(EEPROM.read(i * 2 + 1)));
   } else if (type == ATEM) {
-    Serial.println(EEPROM.read(i * 2 + 1));
+    Serial.print(EEPROM.read(i * 2 + 1));
   }
 }
