@@ -11,12 +11,13 @@ WebUSB WebUSBSerial(0, "localhost/");
 
 const byte ROWS = 2;
 const byte COLS = 5;
+const byte SPACING = 5;
 char keysID[ROWS][COLS] = {
   {'0', '1', '2', '3', '4'},
   {'5', '6', '7', '8', '9'}
 };
 
-typedef enum : byte {FN, MEDIA, YOUTUBE, ATEM} keyType;
+typedef enum : byte {FN, MEDIA, YOUTUBE, ATEM, LETTER} keyType;
 
 //Row pinouts of the keypad
 byte rowPins[ROWS] = {2, 3};
@@ -30,13 +31,14 @@ bool serialInit = false;
 Keypad kpd = Keypad( makeKeymap(keysID), rowPins, colPins, ROWS, COLS );
 
 void setup() {
-  kpd.setHoldTime(800);
+  kpd.setHoldTime(600);
 
   Tlc.init();
   Tlc.clear();
   Tlc.update();
 
   Consumer.begin();
+  Keyboard.begin();
 }
 
 void loop() {
@@ -52,9 +54,22 @@ void loop() {
         // Tells the PC the key configuration
         WebUSBSerial.write("init ");
         for (int i = 0; i < 10; i++) {
-          WebUSBSerial.print(EEPROM.read(i * 2 + 1));
+          int keyType = EEPROM.read(i * SPACING);
+          int value = EEPROM.read(i * SPACING + 1);
+          WebUSBSerial.print(value);
           WebUSBSerial.write(",");
-          WebUSBSerial.print(EEPROM.read(i * 2));
+          WebUSBSerial.print(keyType);
+          if (keyType == LETTER) {
+            WebUSBSerial.write(",");
+            int ctrl = EEPROM.read(i * SPACING + 2);
+            WebUSBSerial.print(ctrl);
+            WebUSBSerial.write(",");
+            int alt = EEPROM.read(i * SPACING + 3);
+            WebUSBSerial.print(alt);
+            WebUSBSerial.write(",");
+            int shift = EEPROM.read(i * SPACING + 4);
+            WebUSBSerial.print(shift);
+          }
           WebUSBSerial.write(" ");
         }
         WebUSBSerial.flush();
@@ -64,9 +79,17 @@ void loop() {
           int keyID = WebUSBSerial.readStringUntil(' ').toInt();
           int keyType = WebUSBSerial.readStringUntil(' ').toInt();
           int value = WebUSBSerial.readStringUntil(' ').toInt();
-
-          EEPROM.update(keyID * 2, keyType);
-          EEPROM.update(keyID * 2 + 1, value);
+          // Ctrl/alt/shift
+          if (keyType == LETTER) {
+            int ctrl = WebUSBSerial.readStringUntil(' ').toInt();
+            int alt = WebUSBSerial.readStringUntil(' ').toInt();
+            int shift = WebUSBSerial.readStringUntil(' ').toInt();
+            EEPROM.update(keyID * SPACING + 2, ctrl);
+            EEPROM.update(keyID * SPACING + 3, alt);
+            EEPROM.update(keyID * SPACING + 4, shift);
+          }
+          EEPROM.update(keyID * SPACING, keyType);
+          EEPROM.update(keyID * SPACING + 1, value);
         }
       }
     }
@@ -105,13 +128,24 @@ void loop() {
 
 // Send a keystroke
 void sendKey(int i) {
-  keyType type = EEPROM.read(i * 2);
+  keyType type = EEPROM.read(i * SPACING);
   if (type == MEDIA) {
-    Consumer.write(EEPROM.read(i * 2 + 1));
-  }
-  else if (type == FN || type == YOUTUBE) {
-    Keyboard.write(KeyboardKeycode(EEPROM.read(i * 2 + 1)));
+    Consumer.write(EEPROM.read(i * SPACING + 1));
+  } else if (type == LETTER) {
+    if (EEPROM.read(i * SPACING + 2) == 1) {
+      Keyboard.press(KEY_LEFT_CTRL);
+    }
+    if (EEPROM.read(i * SPACING + 3) == 1) {
+      Keyboard.press(KEY_LEFT_ALT);
+    }
+    if (EEPROM.read(i * SPACING + 4) == 1) {
+      Keyboard.press(KEY_LEFT_SHIFT);
+    }
+    Keyboard.press(KeyboardKeycode(EEPROM.read(i * SPACING + 1)));
+    Keyboard.releaseAll();
+  } else if (type == FN || type == YOUTUBE) {
+    Keyboard.write(KeyboardKeycode(EEPROM.read(i * SPACING + 1)));
   } else if (type == ATEM) {
-    Serial.print(EEPROM.read(i * 2 + 1));
+    Serial.print(EEPROM.read(i * SPACING + 1));
   }
 }

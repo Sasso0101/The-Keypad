@@ -1,75 +1,65 @@
 var keys = {
   0: {
     label: "Function key",
-    0: {
-      label: "None"
-    },
-    104: {
-      label: "F13"
-    },
-    105: {
-      label: "F14"
-    },
-    106: {
-      label: "F15"
-    },
-    107: {
-      label: "F16"
-    },
+    0: {label: "None"},
+    104: {label: "F13"},
+    105: {label: "F14"},
+    106: {label: "F15"},
+    107: {label: "F16"},
   },
   1: {
     label: "Media key",
-    0: {
-      label: "None"
-    },
-    233: {
-      label: "V+"
-    },
-    234: {
-      label: "V-"
-    },
-    182: {
-      label: "<<"
-    },
-    205: {
-      label: "play pause"
-    },
-    181: {
-      label: ">>"
-    },
-    226: {
-      label: "Vx"
-    }
+    0: {label: "None"},
+    233: {label: "V+"},
+    234: {label: "V-"},
+    182: {label: "<<"},
+    205: {label: "play pause"},
+    181: {label: ">>"},
+    226: {label: "Vx"}
   },
   2: {
     label: "Youtube",
-    0: {
-      label: "None"
-    },
-    9: {
-      label: "Full screen"
-    }
+    0: {label: "None"},
+    9: {label: "Full screen"}
   },
   3: {
     label: "ATEM Mini",
-    0: {
-      label: "None"
-    },
-    1: {
-      label: "Start"
-    },
-    2: {
-      label: "Prepare next segment"
-    },
-    3: {
-      label: "Next segment"
-    },
-    4: {
-      label: "Pause"
-    },
-    5: {
-      label: "Reset"
-    },
+    0: {label: "None"},
+    1: {label: "Start"},
+    2: {label: "Prepare next segment"},
+    3: {label: "Next segment"},
+    4: {label: "Pause"},
+    5: {label: "Reset"},
+  },
+  4: {
+    label: "Letter",
+    0: {label: "None"},
+    4: {label: "a"},
+    5: {label: "b"},
+    6: {label: "c"},
+    7: {label: "d"},
+    8: {label: "e"},
+    9: {label: "f"},
+    10: {label: "g"},
+    11: {label: "h"},
+    12: {label: "i"},
+    13: {label: "j"},
+    14: {label: "k"},
+    15: {label: "l"},
+    16: {label: "m"},
+    17: {label: "n"},
+    18: {label: "o"},
+    19: {label: "p"},
+    20: {label: "q"},
+    21: {label: "r"},
+    22: {label: "s"},
+    23: {label: "t"},
+    24: {label: "u"},
+    25: {label: "v"},
+    26: {label: "w"},
+    27: {label: "x"},
+    28: {label: "y"},
+    29: {label: "z"},
   }
 };
 let port;
@@ -158,13 +148,22 @@ let connecting = false;
 
    for (var i = 1; i < receivedKeys.length; i++) {
       let key = receivedKeys[i].split(",");
-      let action = key[1];
       let value = key[0];
+      let action = key[1];
       let div = document.createElement('div');
       div.id = i-1;
       div.innerHTML = keys[action][value].label;
       div.setAttribute('data-action', action);
       div.setAttribute('data-value', value);
+      if (action == 4) {
+        let ctrl = key[2];
+        let alt = key[3];
+        let shift = key[4];
+        div.setAttribute('data-ctrl', ctrl);
+        div.setAttribute('data-alt', alt);
+        div.setAttribute('data-shift', shift);
+      }
+
       div.addEventListener("click", function(event) {
         keyClick(event)
       });

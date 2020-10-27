@@ -174,3 +174,10 @@ aside {
     width: 200px;
     text-align: center;
 }
+#hotkeyContainer {
+    margin-top: 10px;
+    font-size: 18px;
+}
+#hotkeyContainer input {
+    margin-right: 5px;
+}
