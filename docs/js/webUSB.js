@@ -62,6 +62,10 @@ var keys = {
     29: {label: "z"},
   }
 };
+var ledAnimations = {
+  0: {label: "Button"},
+  1: {label: "Switch"}
+}
 let port;
 let textEncoder = new TextEncoder();
 let connectButton = document.querySelector('#connect');
@@ -150,15 +154,17 @@ let connecting = false;
       let key = receivedKeys[i].split(",");
       let value = key[0];
       let action = key[1];
+      let ledAnimation = key[2];
       let div = document.createElement('div');
       div.id = i-1;
       div.innerHTML = keys[action][value].label;
       div.setAttribute('data-action', action);
       div.setAttribute('data-value', value);
+      div.setAttribute('data-led', ledAnimation);
       if (action == 4) {
-        let ctrl = key[2];
-        let alt = key[3];
-        let shift = key[4];
+        let ctrl = key[3];
+        let alt = key[4];
+        let shift = key[5];
         div.setAttribute('data-ctrl', ctrl);
         div.setAttribute('data-alt', alt);
         div.setAttribute('data-shift', shift);

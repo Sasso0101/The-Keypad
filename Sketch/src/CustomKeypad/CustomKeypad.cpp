@@ -29,7 +29,7 @@
 || #
 ||
 */
-#include <Keypad.h>
+#include "CustomKeypad.h"
 
 // <<constructor>> Allows custom keymap, pin configuration, and keypad sizes.
 Keypad::Keypad(char *userKeymap, byte *row, byte *col, byte numRows, byte numCols) {
@@ -168,7 +168,13 @@ void Keypad::nextKeyState(byte idx, boolean button) {
 			if (button==OPEN)
 				transitionTo (idx, RELEASED);
 			else
-				transitionTo (idx, PRESSED);
+				transitionTo (idx, HOLD1);
+			break;
+		case HOLD1:
+			if (button==OPEN)
+				transitionTo (idx, RELEASED);
+			else
+				transitionTo (idx, HOLD);
 			break;
 		case RELEASED:
 			transitionTo (idx, IDLE);

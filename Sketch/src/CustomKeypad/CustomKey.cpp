@@ -1,6 +1,5 @@
 /*
-||
-|| @file Key.h
+|| @file Key.cpp
 || @version 1.0
 || @author Mark Stanley
 || @contact mstanley@technologist.com
@@ -28,38 +27,32 @@
 || #
 ||
 */
+#include "CustomKey.h"
 
-#ifndef Keypadlib_KEY_H_
-#define Keypadlib_KEY_H_
 
-#include <Arduino.h>
+// default constructor
+Key::Key() {
+	kchar = NO_KEY;
+	kstate = IDLE;
+	stateChanged = false;
+}
 
-#define OPEN LOW
-#define CLOSED HIGH
+// constructor
+Key::Key(char userKeyChar) {
+	kchar = userKeyChar;
+	kcode = -1;
+	kstate = IDLE;
+	stateChanged = false;
+}
 
-typedef unsigned int uint;
-typedef enum{ IDLE, PRESSED, HOLD, RELEASED } KeyState;
 
-const char NO_KEY = '\0';
+void Key::key_update (char userKeyChar, KeyState userState, boolean userStatus) {
+	kchar = userKeyChar;
+	kstate = userState;
+	stateChanged = userStatus;
+}
 
-class Key {
-public:
-	// members
-	char kchar;
-	int kcode;
-	KeyState kstate;
-	boolean stateChanged;
 
-	// methods
-	Key();
-	Key(char userKeyChar);
-	void key_update(char userKeyChar, KeyState userState, boolean userStatus);
-
-private:
-
-};
-
-#endif
 
 /*
 || @changelog

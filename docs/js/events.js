@@ -52,6 +52,7 @@ function keyClick(ev) {
 
   let action = parseInt(ev.target.getAttribute('data-action'));
   let value = parseInt(ev.target.getAttribute('data-value'));
+  let ledAnimation = parseInt(ev.target.getAttribute('data-led'));
   // Ctrl / alt / shift
   if (action == 4) {
     document.querySelector('#hotkeyContainer').style.display = 'block';
@@ -91,7 +92,6 @@ function keyClick(ev) {
   select.addEventListener("change", function(){
     selectChange();
   });
-
   for (let selectValue in keys[action]) {
     entry = keys[action][parseInt(selectValue)];
     if (entry) {
@@ -104,6 +104,22 @@ function keyClick(ev) {
       select.appendChild(option);
     }
   }
+
+  select = document.querySelector('#led');
+  select.innerHTML = '';
+  select.addEventListener("change", function(){
+    selectChange();
+  });
+  for (let ledAnimationValue in ledAnimations) {
+    entry = ledAnimations[ledAnimationValue];
+    let option = document.createElement('option');
+    option.value = ledAnimationValue;
+    option.innerHTML = entry.label;
+    if (ledAnimation == ledAnimationValue) {
+      option.setAttribute('selected', true);
+    }
+    select.appendChild(option);
+  }
 }
 
 function selectChange() {
@@ -113,29 +129,39 @@ function selectChange() {
   let selected = document.querySelector('#options option:checked');
   let selectedLabel = selected.text;
   let selectedValue = parseInt(selected.value);
+  let selectedLed = parseInt(document.querySelector('#led option:checked').value);
   let keyType = document.querySelector('#action').getAttribute('data-keyType');
   keyPreview.innerHTML = selectedLabel;
   key.innerHTML = selectedLabel;
   key.setAttribute('data-value', selectedValue);
+  key.setAttribute('data-led', selectedLed);
 
-  let message = 'changeKey ' + keyID + ' ' + keyType + ' ' + selectedValue;
+  let message = 'changeKey ' + keyID + ' ' + keyType + ' ' + selectedValue + ' ' + selectedLed;
   // Ctrl / alt / shift
   if (keyType == 4) {
+    let ctrl = document.querySelector('#ctrl');
+    let alt = document.querySelector('#alt');
     let shift = document.querySelector('#shift');
     if (ctrl.checked == true) {
       message += ' ' + '1';
+      key.setAttribute('data-ctrl', 1);
     } else {
       message += ' ' + '0';
+      key.setAttribute('data-ctrl', 0);
     }
     if (alt.checked == true) {
       message += ' ' + '1';
+      key.setAttribute('data-alt', 1);
     } else {
       message += ' ' + '0';
+      key.setAttribute('data-alt', 0);
     }
     if (shift.checked == true) {
       message += ' ' + '1';
+      key.setAttribute('data-shift', 1);
     } else {
       message += ' ' + '0';
+      key.setAttribute('data-shift', 0);
     }
   }
   if (port !== undefined) {
