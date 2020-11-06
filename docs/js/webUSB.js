@@ -60,6 +60,16 @@ var keys = {
     27: {label: "x"},
     28: {label: "y"},
     29: {label: "z"},
+    30: {label: "1"},
+    31: {label: "2"},
+    32: {label: "3"},
+    33: {label: "4"},
+    34: {label: "5"},
+    35: {label: "6"},
+    36: {label: "7"},
+    37: {label: "8"},
+    38: {label: "9"},
+    39: {label: "0"},
   }
 };
 var ledAnimations = {
