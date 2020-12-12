@@ -1,5 +1,5 @@
 # "The keypad"
-A fully programmable USB LED keypad powered by Arduino Nano, TLC5940 LED driver, Cherry MX Black switches and X-keys relegendable keycaps. Everything is connected to a custom designed  PCB board and enclosed in a 3D printed case.
+A fully programmable USB LED keypad powered by an Arduino Nano, a TLC5940 LED driver, Cherry MX Black switches and X-keys relegendable keycaps. Everything is connected on a custom designed PCB and enclosed in a 3D printed case.
 Hotkeys can be changed from any webUSB enabled browser (Chrome and Edge by now) from [https://keypad.sasso0101.dev/](https://keypad.sasso0101.dev/).
 ## My setup
 I use it to control media (volume, play/pause, skip/rewind) and to switch the dangerous mute/unmute button on different platforms such as Google Meet, Discord and Zoom (I'm sure everyone needs this in Covid-19 times 😄), but can emulate any combination of keys. Each key can also be used to send predefined data through the serial port.
